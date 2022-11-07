@@ -1,0 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="<c:url value='/css/bootstrap/css/bootstrap.min.css'/>">
+<script src="<c:url value='/js/jquery-3.6.1.min.js'/>"></script>
+<script src="<c:url value='/css/bootstrap/js/bootstrap.min.js'/>"></script>
+
+<!-- pdf파일 관련 js파일 -->
+<script src="<c:url value='/js/html2canvas.js'/>"></script>
+<script src="<c:url value='/js/jspdf.min.js'/>"></script>
+<title>메인 화면</title>
+</head>
+<script type="text/javaScript" language="javascript" defer="defer">
+	
+</script>
+<body>
+	<form action="pay.do" method="post">
+		<button>결제</button>
+	</form>
+
+	
+</body>
+</html>

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Sample">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="searchVO" type="egovframework.example.sample.service.SampleDefaultVO"/>
+	<typeAlias  alias="sampleVO" type="egovframework.example.sample.service.SampleVO"/>
+
+	<resultMap id="sample" class="egovframework.example.sample.service.SampleVO">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="description" column="description"/>
+		<result property="useYn" column="use_yn"/>
+		<result property="regUser" column="reg_user"/>
+	</resultMap>
+	
+	<resultMap id="data" class="egovframework.example.sample.service.SampleVO">
+		<result property="code" column="code"/>
+		<result property="title" column="title"/>
+		<result property="name" column="name"/>
+		<result property="createDate" column="create_date"/>
+		<result property="content" column="content"/>		
+	</resultMap>
+	
+	<resultMap id="file" class="egovframework.example.sample.service.SampleVO">
+		<result property="fileNo" column="file_no"/>
+		<result property="code" column="code"/>
+		<result property="originFileName" column="origin_file_name"/>
+		<result property="storedFileName" column="stored_file_name"/>
+		<result property="path" column="path"/>		
+	</resultMap>
+	
+	<resultMap id="user" class="egovframework.example.sample.service.SampleVO">
+		<result property="userName" column="user_name"/>
+		<result property="userId" column="user_id"/>
+	</resultMap>
+
+	<insert id="sampleDAO.insertSample">
+		<![CDATA[
+			INSERT INTO SAMPLE 
+				( ID
+				  , NAME
+				  , DESCRIPTION
+				  , USE_YN
+				  , REG_USER )
+			VALUES ( #id#
+				  , #name#
+				  , #description#
+				  , #useYn#
+				  , #regUser# )
+		]]>
+	</insert>
+	
+	<update id="sampleDAO.updateSample">
+		<![CDATA[
+			UPDATE SAMPLE
+			SET ID=#id#
+				, NAME=#name#
+				, DESCRIPTION=#description#
+				, USE_YN=#useYn#
+			WHERE ID=#id#
+		]]>
+	</update>
+	
+	<delete id="sampleDAO.deleteSample">
+		<![CDATA[
+			DELETE FROM SAMPLE 
+			WHERE ID=#id#
+		]]>
+	</delete>
+    
+    <select id="sampleDAO.selectSample" resultMap="sample">
+        <![CDATA[
+            SELECT
+                ID, NAME, DESCRIPTION, USE_YN, REG_USER
+            FROM SAMPLE 
+            WHERE ID=#id#
+        ]]>
+    </select>
+	
+	<select id="sampleDAO.selectSampleList" parameterClass="searchVO" resultClass="egovMap">
+
+			SELECT
+				ID, NAME, DESCRIPTION, USE_YN, REG_USER
+			FROM SAMPLE
+			WHERE 1=1
+			<isEqual prepend="AND" property="searchCondition" compareValue="0">
+				ID LIKE '%' || #searchKeyword# || '%'
+			</isEqual>
+			<isEqual prepend="AND" property="searchCondition" compareValue="1">
+				NAME LIKE '%' || #searchKeyword# || '%'
+			</isEqual>
+			ORDER BY ID DESC
+			LIMIT #recordCountPerPage# OFFSET #firstIndex#		
+	</select>
+	
+	<select id="sampleDAO.selectSampleListTotCnt" parameterClass="searchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM SAMPLE
+			WHERE 1=1
+			<isEqual prepend="AND" property="searchCondition" compareValue="0">
+				ID LIKE '%' || #searchKeyword# || '%'
+			</isEqual>
+			<isEqual prepend="AND" property="searchCondition" compareValue="1">
+				NAME LIKE '%' || #searchKeyword# || '%'
+			</isEqual>
+	</select>
+	
+	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+	
+	
+	<select id="sampleDAO.listUp" parameterClass="sampleVO" resultClass="egovMap">
+		SELECT ORDERBY_NUM() RNUM, CODE, TITLE, NAME, CREATE_DATE, COUNT_VISIT, 
+		(SELECT COUNT(*) FROM REPLY_TABLE WHERE CODE= a.CODE) AS replyCnt
+		FROM BOARD_LIST a
+		WHERE 1=1		
+		<isEqual prepend="AND" property="searchCondition" compareValue="name">
+			NAME LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		<isEqual prepend="AND" property="searchCondition" compareValue="title">
+			TITLE LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		<isEqual prepend="AND" property="searchCondition" compareValue="content">
+			CONTENT LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		
+		<isNull property="sort">
+			ORDER BY CODE asc
+		</isNull>
+		<isEqual property="sort" compareValue="code">
+			ORDER BY CODE asc
+		</isEqual>
+		<isEqual property="sort" compareValue="countVisit">
+			ORDER BY COUNT_VISIT desc
+		</isEqual>
+		<isEqual property="sort" compareValue="replyCnt">
+			ORDER BY replyCnt desc
+		</isEqual>		
+		<!-- FOR ORDERBY_NUM() BETWEEN 0 AND 100 -->
+		<!-- ORDER BY CODE asc -->
+		LIMIT #recordCountPerPage# OFFSET #firstIndex#
+			
+	</select>
+	
+	<select id="sampleDAO.listCnt" parameterClass="sampleVO" resultClass="int">
+		SELECT COUNT(*) FROM BOARD_LIST WHERE 1=1
+		<isEqual prepend="AND" property="searchCondition" compareValue="name">
+			NAME LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		<isEqual prepend="AND" property="searchCondition" compareValue="title">
+			TITLE LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		<isEqual prepend="AND" property="searchCondition" compareValue="content">
+			CONTENT LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+	</select>	
+	
+	<select id="sampleDAO.listDetail" parameterClass="sampleVO" resultClass="egovMap">
+		SELECT CODE,TITLE,NAME,CREATE_DATE,CLOB_TO_CHAR(content) content, COUNT_VISIT
+		FROM BOARD_LIST
+		WHERE 1=1 
+		AND CODE=#code#
+	</select>
+	
+	<insert id="sampleDAO.insertData">
+		<![CDATA[
+		INSERT INTO BOARD_LIST(CODE, TITLE, NAME, CREATE_DATE, CONTENT)
+		VALUES (serial_code.next_value, #title#, #name#, now(), #content#)
+		]]>
+	</insert>
+	
+	<select id="sampleDAO.selectList" resultMap="data">
+        <![CDATA[
+            SELECT CODE,TITLE,NAME,CREATE_DATE,CLOB_TO_CHAR(content) content 
+            FROM BOARD_LIST               
+            WHERE 1=1 
+			AND CODE=#code#
+        ]]>
+    </select>
+	
+	<update id="sampleDAO.updateData">
+		<![CDATA[
+			UPDATE BOARD_LIST
+			SET TITLE=#title#, 
+				NAME=#name#, 
+				CREATE_DATE=now(), 
+				CONTENT=#content#
+			WHERE 1=1
+			AND CODE=#code#
+		]]>
+	</update>
+	
+	<delete id="sampleDAO.deleteData">
+		<![CDATA[
+			DELETE FROM BOARD_LIST 
+			WHERE 1=1
+			AND CODE=#code#
+		]]>
+	</delete>
+	
+	<insert id="sampleDAO.insertFile">
+		<![CDATA[
+		INSERT INTO FILE_TABLE(FILE_NO, CODE, ORIGIN_FILE_NAME, STORED_FILE_NAME, PATH, FILE_SIZE)
+		VALUES (serial_file_no.next_value, serial_code.current_value, #originFileName#, #storedFileName#, #path#, #fileSize#)
+		]]>
+	</insert>
+	
+	<insert id="sampleDAO.updateInsertFile">
+		<![CDATA[
+		INSERT INTO FILE_TABLE(FILE_NO, CODE, ORIGIN_FILE_NAME, STORED_FILE_NAME, PATH, FILE_SIZE)
+		VALUES (serial_file_no.next_value, #code#, #originFileName#, #storedFileName#, #path#, #fileSize#)
+		]]>
+	</insert>
+	
+	<select id="sampleDAO.fileInfoByCode" parameterClass="sampleVO" resultClass="egovMap">
+		SELECT FILE_NO, CODE, ORIGIN_FILE_NAME, STORED_FILE_NAME, PATH, FILE_SIZE
+		FROM FILE_TABLE
+		WHERE 1=1 
+		AND CODE=#code#
+		ORDER BY FILE_NO asc
+	</select>
+	
+	<select id="sampleDAO.fileInfoByFileNo" resultMap="file">
+		SELECT FILE_NO, CODE, ORIGIN_FILE_NAME, STORED_FILE_NAME, PATH
+		FROM FILE_TABLE
+		WHERE 1=1 
+		AND FILE_NO=#fileNo#
+	</select>
+	
+	<delete id="sampleDAO.deleteFileByFileNo">
+		<![CDATA[
+			DELETE FROM FILE_TABLE 
+			WHERE 1=1
+			AND FILE_NO=#fileNo#
+		]]>
+	</delete>
+	
+	<select id="sampleDAO.getBoardList" parameterClass="sampleVO" resultClass="egovMap">
+		SELECT CODE,TITLE,NAME, CREATE_DATE, CONTENT FROM BOARD_LIST
+		WHERE 1=1
+		<isEqual prepend="AND" property="searchCondition" compareValue="name">
+			NAME LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		<isEqual prepend="AND" property="searchCondition" compareValue="title">
+			TITLE LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		<isEqual prepend="AND" property="searchCondition" compareValue="content">
+			CONTENT LIKE '%' || #searchKeyword# || '%'
+		</isEqual>
+		ORDER BY CODE asc
+	</select>	
+	
+	<select id="sampleDAO.replyList" parameterClass="sampleVO" resultClass="egovMap">
+		SELECT REPLY_NO, CODE, CLOB_TO_CHAR(reply_content) reply_content, REPLY_WRITER, REPLY_DATE
+		FROM REPLY_TABLE
+		WHERE 1=1 
+		AND CODE=#code#
+		ORDER BY REPLY_NO asc
+	</select>
+	
+	<insert id="sampleDAO.insertReply">
+		<![CDATA[
+		INSERT INTO REPLY_TABLE(REPLY_NO, CODE, REPLY_CONTENT, REPLY_WRITER, REPLY_DATE)
+		VALUES (serial_reply_no.next_value, #code#, #replyContent#, #replyWriter#, now())
+		]]>
+	</insert>
+	
+	<delete id="sampleDAO.deleteReply">
+		<![CDATA[
+			DELETE FROM REPLY_TABLE 
+			WHERE 1=1
+			AND REPLY_NO=#replyNo#
+		]]>
+	</delete>
+	
+	<update id="sampleDAO.updateCountVisit">
+		<![CDATA[
+			UPDATE BOARD_LIST
+			SET COUNT_VISIT=COUNT_VISIT + 1
+			WHERE 1=1
+			AND CODE=#code#
+		]]>
+	</update>
+	
+	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+	<select id="sampleDAO.loginCheck" resultClass="String">
+		SELECT USER_NAME 
+		FROM MEMBER_TABLE
+		WHERE 1=1 
+		AND USER_ID = #userId#
+		AND USER_PW = #userPw#
+	</select>
+	
+	<select id="sampleDAO.viewMember" resultMap="user">
+		SELECT USER_NAME, USER_ID
+		FROM MEMBER_TABLE
+		WHERE 1=1
+		AND USER_ID = #userId#
+		AND USER_PW = #userPw#
+	</select>
+	
+	<insert id="sampleDAO.insertMember">
+		<![CDATA[
+		INSERT INTO MEMBER_TABLE(USER_NO, USER_NAME, USER_ID, USER_PW)
+		VALUES (serial_user_no.next_value, #userName#, #userId#, #userPw#)
+		]]>
+	</insert>
+	
+	<select id="sampleDAO.idCheck" resultClass="String">
+		SELECT USER_ID
+		FROM MEMBER_TABLE
+		WHERE 1=1
+		AND USER_ID = #userId#
+	</select>
+	
+	
+</sqlMap>
