@@ -237,7 +237,7 @@
 		]]>
 	</delete>
 	
-	<select id="sampleDAO.getBoardList" parameterClass="sampleVO" resultClass="egovMap">
+	<select id="sampleDAO.excelList" parameterClass="sampleVO" resultClass="egovMap">
 		SELECT CODE,TITLE,NAME, CREATE_DATE, CONTENT FROM BOARD_LIST
 		WHERE 1=1
 		<isEqual prepend="AND" property="searchCondition" compareValue="name">
