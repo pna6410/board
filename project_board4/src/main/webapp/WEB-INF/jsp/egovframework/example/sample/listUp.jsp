@@ -1,6 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%>
@@ -11,6 +9,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <link rel="stylesheet" href="<c:url value='/css/bootstrap/css/bootstrap.min.css'/>">
 <script src="<c:url value='/js/jquery-3.6.1.min.js'/>"></script>
 <script src="<c:url value='/css/bootstrap/js/bootstrap.min.js'/>"></script>
@@ -18,6 +17,7 @@
 <!-- pdf파일 관련 js파일 -->
 <script src="<c:url value='/js/html2canvas.js'/>"></script>
 <script src="<c:url value='/js/jspdf.min.js'/>"></script>
+
 <title>메인 화면</title>
 </head>
 <script type="text/javaScript" language="javascript" defer="defer">
@@ -105,8 +105,7 @@
 <body>
 ${searchFormData } <br>
 
-	<form:form commandName="sampleVO" id="listForm" name="listForm"
-		method="post">
+	<form:form commandName="sampleVO" id="listForm" name="listForm" method="post">
 		
 		<input type="hidden" id="code" name="code" value="${searchFormData.code}">
 		<input type="hidden" id="pageNo" name="pageNo" value="${searchFormData.pageIndex}">
@@ -149,6 +148,7 @@ ${searchFormData } <br>
 						<form:option value="replyCnt" label="댓글 순" />
 					</form:select>
 					<button type="button" onclick="javascript:sortList();">정렬</button>
+					
 					<div id = "pdfDiv">
 					<table class="table table-hover">
 						<thead>
@@ -164,23 +164,29 @@ ${searchFormData } <br>
 						<tbody>
 							<c:forEach var="result" items="${resultList}" varStatus="status">
 								<tr>
-									<td align="center" class="listtd" style="word-break:break-all; width:10%"><c:out
-											value="${result.rnum}" />&nbsp;</td>
 									<td align="center" class="listtd" style="word-break:break-all; width:10%">
-									<a href="javascript:detailView('${result.code}');"><c:out
-												value="${result.code}" />&nbsp;</a></td>
-									<td align="center" class="listtd" style="word-break:break-all; width:10%"><c:out
-											value="${result.title}" />&nbsp;
-									<c:if test = "${result.replyCnt > 0}">
-										<span style = "color: blue;">(${result.replyCnt})</span>
-									</c:if>
+										<c:out value="${result.rnum}" />&nbsp;
 									</td>
-									<td align="center" class="listtd" style="word-break:break-all; width:10%"><c:out
-											value="${result.name}" />&nbsp;</td>
-									<td align="center" class="listtd" style="word-break:break-all; width:10%"><c:out
-											value="${result.countVisit}" />&nbsp;</td>
-									<td align="center" class="listtd" style="word-break:break-all; width:10%"><c:out
-											value="${result.createDate}" />&nbsp;</td>
+									<td align="center" class="listtd" style="word-break:break-all; width:10%">
+										<a href="javascript:detailView('${result.code}');">
+											<c:out value="${result.code}" />&nbsp;
+										</a>
+									</td>
+									<td align="center" class="listtd" style="word-break:break-all; width:10%">
+										<c:out value="${result.title}" />&nbsp;
+										<c:if test = "${result.replyCnt > 0}">
+											<span style = "color: blue;">(${result.replyCnt})</span>
+										</c:if>
+									</td>
+									<td align="center" class="listtd" style="word-break:break-all; width:10%">
+										<c:out value="${result.name}" />&nbsp;
+									</td>
+									<td align="center" class="listtd" style="word-break:break-all; width:10%">
+										<c:out value="${result.countVisit}" />&nbsp;
+									</td>
+									<td align="center" class="listtd" style="word-break:break-all; width:10%">
+										<c:out value="${result.createDate}" />&nbsp;
+									</td>
 								</tr>
 							</c:forEach>
 						</tbody>
